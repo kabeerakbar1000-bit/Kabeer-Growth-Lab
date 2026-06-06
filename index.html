@@ -1,9 +1,454 @@
-<!DOCTYPE html>
-<html>
-  <body>
-    <div id="root"></div>
-    <script>
-      document.getElementById('root').innerHTML = "<h1>Welcome to Kabeer Growth Lab</h1>";
-    </script>
-  </body>
-</html>
+
+import { useState, useEffect, useRef } from "react";
+
+/* ─────────────────────────────────────────────────────────
+   STYLES
+───────────────────────────────────────────────────────── */
+const STYLES = `
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600&display=swap');
+
+  :root {
+    --font-display: 'Plus Jakarta Sans', sans-serif;
+    --font-body:    'Manrope', sans-serif;
+
+    --purple:      #7C3AED;
+    --purple-deep: #5B21B6;
+    --blue:        #2563EB;
+    --cyan:        #06B6D4;
+    --orange:      #F97316;
+
+    --ink:         #0D0D1A;
+    --ink-soft:    #1A1830;
+    --text-body:   #4B5563;
+    --text-muted:  #9CA3AF;
+    --border:      #E5E7EB;
+    --bg:          #FFFFFF;
+    --bg-soft:     #F8F7FF;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text-body);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Navbar ── */
+  .navbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+  }
+  .navbar.scrolled {
+    background: rgba(255,255,255,0.95);
+    box-shadow: 0 1px 0 var(--border);
+    backdrop-filter: blur(12px);
+  }
+
+  /* ── Hero ── */
+  .hero-wrap {
+    position: relative; min-height: 100vh;
+    display: flex; align-items: center; overflow: hidden;
+    background: var(--ink);
+  }
+  .hero-gradient {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg,#3B0764 0%,#5B21B6 28%,#1D4ED8 62%,#0891B2 100%);
+    opacity: 0.96;
+  }
+  .hero-grid {
+    position: absolute; inset: 0; opacity: 0.05;
+    background-image:
+      linear-gradient(rgba(255,255,255,1) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+  /* floating blobs */
+  .blob { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.3; pointer-events: none; }
+  .blob-a { width:500px;height:500px; background:radial-gradient(circle,#A855F7,transparent 70%); top:-100px;left:-60px; animation:floatA 13s ease-in-out infinite; }
+  .blob-b { width:380px;height:380px; background:radial-gradient(circle,#06B6D4,transparent 70%); bottom:-50px;right:4%;  animation:floatB 11s ease-in-out infinite; }
+  .blob-c { width:260px;height:260px; background:radial-gradient(circle,#F97316,transparent 70%); top:35%;right:20%;    animation:floatA 15s ease-in-out infinite reverse; }
+
+  @keyframes floatA {
+    0%,100% { transform:translate(0,0) scale(1); }
+    33%      { transform:translate(36px,-28px) scale(1.06); }
+    66%      { transform:translate(-18px,18px) scale(0.94); }
+  }
+  @keyframes floatB {
+    0%,100% { transform:translate(0,0) scale(1); }
+    50%      { transform:translate(-28px,-18px) scale(1.07); }
+  }
+
+  /* ── Fade-up ── */
+  .fade-up { opacity:0; transform:translateY(26px); transition:opacity .65s ease,transform .65s ease; }
+  .fade-up.visible { opacity:1; transform:translateY(0); }
+
+  /* ── Pill ── */
+  .pill {
+    display:inline-flex; align-items:center; gap:8px;
+    background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.18);
+    backdrop-filter:blur(4px); border-radius:999px;
+    padding:6px 16px; margin-bottom:24px;
+    font-family:var(--font-display); font-size:11px; font-weight:700;
+    letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,0.9);
+  }
+  .pill-dot { width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan); }
+
+  /* ── Buttons ── */
+  .btn-orange {
+    background:var(--orange); color:#fff;
+    font-family:var(--font-display); font-weight:700;
+    padding:14px 28px; border-radius:10px; border:none; cursor:pointer;
+    font-size:15px; text-decoration:none; display:inline-flex; align-items:center; gap:8px;
+    transition:transform .2s,box-shadow .2s,background .2s;
+    box-shadow:0 4px 20px rgba(249,115,22,.32);
+  }
+  .btn-orange:hover { background:#EA6C00; transform:translateY(-2px); box-shadow:0 8px 28px rgba(249,115,22,.42); }
+
+  .btn-cyan-ghost {
+    background:transparent; color:#fff;
+    font-family:var(--font-display); font-weight:600;
+    padding:13px 28px; border-radius:10px;
+    border:1.5px solid rgba(6,182,212,.55); cursor:pointer;
+    font-size:15px; text-decoration:none; display:inline-block;
+    transition:all .2s ease;
+  }
+  .btn-cyan-ghost:hover { background:rgba(6,182,212,.12); border-color:var(--cyan); box-shadow:0 0 18px rgba(6,182,212,.22); }
+
+  .btn-gradient {
+    background:linear-gradient(135deg,var(--purple),var(--blue)); color:#fff;
+    font-family:var(--font-display); font-weight:700;
+    padding:14px 28px; border-radius:10px; border:none; cursor:pointer;
+    font-size:15px; text-decoration:none; display:inline-flex; align-items:center; gap:8px;
+    transition:transform .2s,box-shadow .2s;
+    box-shadow:0 4px 20px rgba(124,58,237,.3);
+  }
+  .btn-gradient:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(124,58,237,.42); }
+
+  .btn-ghost {
+    background:transparent; color:var(--purple);
+    font-family:var(--font-display); font-weight:600;
+    padding:13px 28px; border-radius:10px;
+    border:1.5px solid var(--border); cursor:pointer;
+    font-size:15px; text-decoration:none; display:inline-block;
+    transition:all .2s ease;
+  }
+  .btn-ghost:hover { border-color:var(--purple); background:var(--bg-soft); }
+
+  /* ── Service cards ── */
+  .svc-card {
+    border-radius:16px; padding:32px 28px; background:#fff;
+    border:1px solid var(--border); position:relative; overflow:hidden;
+    transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  }
+  .svc-card::before {
+    content:''; position:absolute; top:0;left:0;right:0; height:3px; opacity:0;
+    transition:opacity .25s ease;
+  }
+  .svc-card:nth-child(1)::before { background:linear-gradient(90deg,var(--purple),var(--blue)); }
+  .svc-card:nth-child(2)::before { background:linear-gradient(90deg,var(--cyan),var(--blue)); }
+  .svc-card:nth-child(3)::before { background:linear-gradient(90deg,var(--orange),#FBBF24); }
+  .svc-card:hover { transform:translateY(-6px); box-shadow:0 18px 44px rgba(0,0,0,.08); border-color:transparent; }
+  .svc-card:hover::before { opacity:1; }
+
+  .svc-icon {
+    width:50px; height:50px; border-radius:13px;
+    display:flex; align-items:center; justify-content:center; margin-bottom:20px;
+  }
+  .svc-icon-a { background:linear-gradient(135deg,rgba(124,58,237,.12),rgba(37,99,235,.07)); }
+  .svc-icon-b { background:linear-gradient(135deg,rgba(6,182,212,.12),rgba(37,99,235,.07)); }
+  .svc-icon-c { background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(251,191,36,.07)); }
+
+  /* ── Feature rows ── */
+  .feat-row { display:flex;gap:14px;align-items:flex-start; padding:16px 0; border-bottom:1px solid var(--border); }
+  .feat-row:last-child { border-bottom:none; }
+  .feat-check {
+    width:33px; height:33px; flex-shrink:0; border-radius:8px;
+    background:linear-gradient(135deg,rgba(124,58,237,.1),rgba(37,99,235,.06));
+    display:flex; align-items:center; justify-content:center;
+  }
+
+  /* ── Why-us panel ── */
+  .why-panel {
+    background:var(--bg-soft); border-radius:20px; padding:44px 38px;
+    border:1px solid rgba(124,58,237,.13); position:relative; overflow:hidden;
+  }
+  .why-panel::after {
+    content:''; position:absolute; top:-60px;right:-60px;
+    width:200px;height:200px;border-radius:50%;
+    background:radial-gradient(circle,rgba(124,58,237,.11),transparent 70%);
+    pointer-events:none;
+  }
+
+  /* ── Pillar cards ── */
+  .pillar {
+    padding:18px 20px; border-radius:11px;
+    border:1px solid var(--border); background:#fff;
+    transition:border-color .2s,box-shadow .2s;
+  }
+  .pillar:hover { border-color:var(--purple); box-shadow:0 4px 16px rgba(124,58,237,.08); }
+
+  /* ── CTA band ── */
+  .cta-band {
+    background:linear-gradient(135deg,#3B0764 0%,#5B21B6 35%,#1D4ED8 100%);
+    position:relative; overflow:hidden;
+  }
+  .cta-orb {
+    position:absolute; border-radius:50%; filter:blur(72px); pointer-events:none;
+  }
+
+  /* ── Eyebrow ── */
+  .eyebrow {
+    font-family:var(--font-display); font-weight:700;
+    font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+    display:inline-block; margin-bottom:14px;
+  }
+  .ey-purple { color:var(--purple); }
+  .ey-cyan   { color:var(--cyan); }
+  .ey-orange { color:var(--orange); }
+
+  /* ── Mobile menu ── */
+  .mob-menu {
+    display:none; position:fixed; inset:0;
+    background:#fff; z-index:190;
+    flex-direction:column; align-items:center; justify-content:center; gap:28px;
+  }
+  .mob-menu.open { display:flex; }
+  @media (max-width:768px) { .desk-nav { display:none !important; } .ham { display:flex !important; } }
+  @media (min-width:769px) { .ham { display:none !important; } }
+
+  /* ── Scroll cue ── */
+  @keyframes bob { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)} }
+  .scroll-cue {
+    position:absolute; bottom:30px; left:50%; transform:translateX(-50%);
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+    animation:bob 2.4s ease-in-out infinite;
+  }
+`;
+
+/* ── Icons ── */
+const IconSearch = ({ c = "#7C3AED" }) => (
+  <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+  </svg>
+);
+const IconUsers = ({ c = "#06B6D4" }) => (
+  <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+  </svg>
+);
+const IconPen = ({ c = "#F97316" }) => (
+  <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+  </svg>
+);
+const IconCheck = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" strokeWidth="2.5" strokeLinecap="round">
+    <polyline points="20 6 9 17 4 12"/>
+  </svg>
+);
+const IconArrow = ({ c = "#fff" }) => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.5" strokeLinecap="round">
+    <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+  </svg>
+);
+const IconChevron = () => (
+  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2" strokeLinecap="round">
+    <polyline points="6 9 12 15 18 9"/>
+  </svg>
+);
+const LogoMark = ({ size = 30 }) => (
+  <span style={{
+    width: size, height: size, borderRadius: size * 0.28,
+    background: "linear-gradient(135deg,#7C3AED,#2563EB)",
+    display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+  }}>
+    <svg width={size * 0.5} height={size * 0.5} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round">
+      <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>
+    </svg>
+  </span>
+);
+
+/* ── Fade-up hook ── */
+function useFadeUp() {
+  const ref = useRef(null);
+  useEffect(() => {
+    const el = ref.current; if (!el) return;
+    const io = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) { el.classList.add("visible"); io.disconnect(); } },
+      { threshold: 0.1 }
+    );
+    io.observe(el); return () => io.disconnect();
+  }, []);
+  return ref;
+}
+function Fade({ children, delay = 0, style = {} }) {
+  const ref = useFadeUp();
+  return <div ref={ref} className="fade-up" style={{ transitionDelay: `${delay}ms`, ...style }}>{children}</div>;
+}
+
+/* ── Gradient text helper ── */
+const GradText = ({ children, g = "linear-gradient(90deg,#06B6D4,#A855F7)" }) => (
+  <span style={{ background: g, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>{children}</span>
+);
+
+/* ─────────────────────────────────────────────────────────
+   APP
+───────────────────────────────────────────────────────── */
+export default function KabeerGrowthLab() {
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const fn = () => setScrolled(window.scrollY > 52);
+    window.addEventListener("scroll", fn);
+    return () => window.removeEventListener("scroll", fn);
+  }, []);
+
+  const navLinks = [
+    { label: "About",    href: "#about" },
+    { label: "Services", href: "#services" },
+    { label: "Why Us",   href: "#why-us" },
+  ];
+
+  const AGENCY   = "Kabeer Growth Lab";
+  const EMAIL    = "hello@kabeergrowthllab.com";
+  const TAGLINE  = "We help local businesses grow online.";
+
+  /* ── nav link style helper ── */
+  const navLinkStyle = (isScrolled) => ({
+    fontFamily: "var(--font-display)", fontWeight: 500, fontSize: 14,
+    color: isScrolled ? "#4B5563" : "rgba(255,255,255,0.8)",
+    textDecoration: "none", transition: "color .2s",
+  });
+
+  return (
+    <>
+      <style>{STYLES}</style>
+
+      {/* ══ NAVBAR ══ */}
+      <nav className={`navbar${scrolled ? " scrolled" : ""}`} style={{ padding: "0 28px" }}>
+        <div style={{ maxWidth: 1140, margin: "0 auto", height: 66, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+
+          {/* Logo */}
+          <a href="#" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: 9 }}>
+            <LogoMark size={30} />
+            <span style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 16, color: scrolled ? "#0D0D1A" : "#fff" }}>
+              Kabeer <span style={{ fontWeight: 500, color: scrolled ? "#7C3AED" : "rgba(255,255,255,0.65)" }}>Growth Lab</span>
+            </span>
+          </a>
+
+          {/* Desktop */}
+          <div className="desk-nav" style={{ display: "flex", alignItems: "center", gap: 34 }}>
+            {navLinks.map(l => (
+              <a key={l.label} href={l.href} style={navLinkStyle(scrolled)}
+                onMouseOver={e => e.target.style.color = scrolled ? "#0D0D1A" : "#fff"}
+                onMouseOut={e => e.target.style.color = scrolled ? "#4B5563" : "rgba(255,255,255,0.8)"}
+              >{l.label}</a>
+            ))}
+            <a href={`mailto:${EMAIL}`} className="btn-orange" style={{ padding: "10px 20px", fontSize: 13 }}>Get in Touch</a>
+          </div>
+
+          {/* Hamburger */}
+          <button className="ham" onClick={() => setMenuOpen(!menuOpen)}
+            style={{ background: "none", border: "none", cursor: "pointer", padding: 8, display: "flex", flexDirection: "column", gap: 5 }}>
+            {[0,1,2].map(i => (
+              <span key={i} style={{ width: 22, height: 2, borderRadius: 2, display: "block", background: scrolled ? "#333" : "#fff" }} />
+            ))}
+          </button>
+        </div>
+      </nav>
+
+      {/* Mobile menu */}
+      <div className={`mob-menu${menuOpen ? " open" : ""}`}>
+        <button onClick={() => setMenuOpen(false)}
+          style={{ position: "absolute", top: 18, right: 22, background: "none", border: "none", fontSize: 28, cursor: "pointer", color: "#333" }}>×</button>
+        {navLinks.map(l => (
+          <a key={l.label} href={l.href} onClick={() => setMenuOpen(false)}
+            style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 24, color: "#0D0D1A", textDecoration: "none" }}>{l.label}</a>
+        ))}
+        <a href={`mailto:${EMAIL}`} className="btn-orange">Get in Touch</a>
+      </div>
+
+      {/* ══ HERO ══ */}
+      <section className="hero-wrap">
+        <div className="hero-gradient" />
+        <div className="blob blob-a" /><div className="blob blob-b" /><div className="blob blob-c" />
+        <div className="hero-grid" />
+
+        <div style={{ position: "relative", zIndex: 2, maxWidth: 1140, margin: "0 auto", padding: "130px 28px 90px", width: "100%" }}>
+          <div style={{ maxWidth: 700 }}>
+
+            <div className="pill">
+              <span className="pill-dot" />
+              Digital Marketing for Local Businesses
+            </div>
+
+            <h1 style={{
+              fontFamily: "var(--font-display)", fontWeight: 800,
+              fontSize: "clamp(2.5rem, 6.5vw, 4.4rem)", lineHeight: 1.08,
+              color: "#fff", letterSpacing: "-0.03em", marginBottom: 22,
+            }}>
+              {TAGLINE.split("grow")[0]}
+              <GradText>grow online.</GradText>
+            </h1>
+
+            <p style={{
+              fontFamily: "var(--font-body)", color: "rgba(255,255,255,0.7)",
+              fontSize: "clamp(.95rem,2vw,1.13rem)", lineHeight: 1.8,
+              maxWidth: 530, marginBottom: 42,
+            }}>
+              {AGENCY} is a fresh digital marketing studio built for small and local businesses that are ready to stand out — with SEO and social media strategies that actually work.
+            </p>
+
+            <div style={{ display: "flex", gap: 14, flexWrap: "wrap", alignItems: "center" }}>
+              <a href="#services" className="btn-orange">Explore Services <IconArrow /></a>
+              <a href="#about"    className="btn-cyan-ghost">About Us</a>
+            </div>
+
+            {/* Service tags */}
+            <div style={{ marginTop: 52, display: "flex", gap: 24, flexWrap: "wrap" }}>
+              {[
+                { t: "SEO Optimisation",  c: "#06B6D4" },
+                { t: "Social Media",      c: "rgba(255,255,255,0.5)" },
+                { t: "Content Strategy",  c: "#06B6D4" },
+                { t: "Local Growth",      c: "rgba(255,255,255,0.5)" },
+              ].map(({ t, c }) => (
+                <span key={t} style={{ fontFamily: "var(--font-display)", fontSize: 12, fontWeight: 600, color: c, letterSpacing: "0.04em" }}>✦ {t}</span>
+              ))}
+            </div>
+
+          </div>
+        </div>
+
+        <div className="scroll-cue">
+          <span style={{ fontFamily: "var(--font-body)", color: "rgba(255,255,255,0.28)", fontSize: 10, letterSpacing: ".12em", textTransform: "uppercase" }}>Scroll</span>
+          <IconChevron />
+        </div>
+      </section>
+
+      {/* ══ ABOUT ══ */}
+      <section id="about" style={{ background: "var(--bg)", padding: "96px 28px" }}>
+        <div style={{ maxWidth: 1140, margin: "0 auto" }}>
+          <div style={{ maxWidth: 680, margin: "0 auto" }}>
+
+            <Fade>
+              <span className="eyebrow ey-purple">About Us</span>
+              <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "clamp(1.9rem,4vw,2.8rem)", color: "var(--ink)", lineHeight: 1.15, letterSpacing: "-0.025em", marginBottom: 22 }}>
+                Marketing that <GradText g="linear-gradient(90deg,var(--purple),var(--blue))">moves the needle.</GradText>
+              </h2>
+              <p style={{ fontFamily: "var(--font-body)", lineHeight: 1.82, fontSize: 16, color: "var(--text-body)", marginBottom: 18 }}>
+                {AGENCY} is a new digital marketing studio with one clear mission: helping local businesses grow through honest, modern strategies. We believe every small business deserves access to marketing that genuinely works — without the fluff or the jargon.
+              </p>
+              <p style={{ fontFamily: "var(--font-body)", lineHeight: 1.82, fontSize: 16, color: "var(--text-body)", marginBottom: 40 }}>
+                We focus on SEO and social media marketing tailored to local markets. Whether you want to rank higher on Google, build an engaged audience, or bring more customers through the door — we're here to make it happen, simply and transparently.
+              </p>
+            </Fade>
+
+            <Fade delay={130}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 12 }}>
+                {[
+                  
