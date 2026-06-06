@@ -3,68 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kabeer Growth Lab | Elite Digital Agency</title>
+    <title>Kabeer Growth Lab</title>
     <style>
         :root {
-            --primary: #6366f1;
-            --secondary: #a855f7;
-            --accent: #f43f5e;
-            --dark: #0f172a;
-            --light: #f8fafc;
+            --bg-color: #080C14;
+            --gradient-start: #4f46e5;
+            --gradient-end: #7c3aed;
+            --text-color: #ffffff;
+            --accent-color: #3EE8B5;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: var(--dark); color: var(--light); line-height: 1.6; }
-
-        /* Navigation */
-        nav { padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 1000; }
-        .nav-links a { color: white; margin-left: 20px; text-decoration: none; font-weight: 500; }
-
-        /* Hero with Gradient */
-        .hero { padding: 100px 5%; text-align: center; background: linear-gradient(135deg, var(--primary), var(--secondary)); }
-        .hero h1 { font-size: 4rem; margin-bottom: 20px; }
-        .btn-grad { padding: 15px 40px; background: var(--accent); color: white; border-radius: 50px; font-weight: bold; border: none; cursor: pointer; transition: 0.3s; }
-        .btn-grad:hover { transform: scale(1.1); }
-
-        /* Services Grid - More Options */
-        .services { padding: 80px 5%; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; }
-        .service-card { padding: 40px; background: #1e293b; border-radius: 20px; transition: 0.3s; border: 1px solid #334155; }
-        .service-card:hover { border-color: var(--primary); transform: translateY(-10px); background: #334155; }
-
-        /* Vibrant Contact Section */
-        .contact { padding: 80px 5%; background: #1e293b; border-radius: 50px 50px 0 0; }
-        .form-container { max-width: 600px; margin: auto; }
-        input, textarea { width: 100%; padding: 15px; margin-bottom: 15px; border-radius: 10px; border: none; background: #0f172a; color: white; }
+        body { font-family: sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 0; }
+        
+        /* Hero Section Gradient */
+        .hero { 
+            background: linear-gradient(180deg, var(--gradient-start), var(--gradient-end));
+            padding: 60px 20px; text-align: center; border-radius: 0 0 40px 40px;
+        }
+        .hero h1 { font-size: 2.5rem; margin-bottom: 20px; }
+        
+        /* Services Section */
+        .services { padding: 40px 20px; }
+        .card { 
+            background: #111827; padding: 25px; margin-bottom: 20px; 
+            border-radius: 20px; border: 1px solid #374151;
+        }
+        
+        /* Buttons */
+        .btn { 
+            background: #f97316; color: white; padding: 15px 30px; 
+            border-radius: 10px; text-decoration: none; display: inline-block; font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
-    <nav>
-        <div style="font-size: 1.5rem; font-weight: 800; color: var(--accent);">KABEER LAB</div>
-        <div class="nav-links">
-            <a href="#">Home</a> <a href="#">Services</a> <a href="#">Portfolio</a> <a href="#">Contact</a>
-        </div>
-    </nav>
-
     <header class="hero">
-        <h1>Scale Your Growth With Elite Strategy</h1>
-        <p>Premium Digital Marketing Services for ambitious brands.</p><br>
-        <button class="btn-grad">Get A Quote</button>
+        <p>DIGITAL MARKETING FOR LOCAL BUSINESS</p>
+        <h1>We help local businesses grow online.</h1>
+        <a href="#" class="btn">Explore Services</a>
     </header>
 
     <section class="services">
-        <div class="service-card"><h3>🚀 SEO Mastery</h3><p>Top ranking results for your business.</p></div>
-        <div class="service-card"><h3>💰 Paid Ads</h3><p>ROI-focused campaigns that drive sales.</p></div>
-        <div class="service-card"><h3>🎨 Brand Design</h3><p>Visual identities that stand out.</p></div>
-        <div class="service-card"><h3>📱 Social Media</h3><p>Engage your audience like never before.</p></div>
-    </section>
-
-    <section class="contact">
-        <h2 style="text-align: center; margin-bottom: 30px;">Let's Build Something Great</h2>
-        <div class="form-container">
-            <input type="text" placeholder="Full Name">
-            <input type="email" placeholder="Your Email">
-            <textarea placeholder="Tell us your goals" rows="5"></textarea>
-            <button class="btn-grad" style="width: 100%;">Send Message</button>
+        <h2>Everything you need to grow online.</h2>
+        <div class="card">
+            <h3>SEO Optimization</h3>
+            <p>Get found on Google with targeted keyword research.</p>
+        </div>
+        <div class="card">
+            <h3>Social Media Marketing</h3>
+            <p>Build a real presence on the platforms your customer is on.</p>
+        </div>
+        <div class="card">
+            <h3>Content Creation</h3>
+            <p>Well-crafted content that tells your story.</p>
         </div>
     </section>
 
