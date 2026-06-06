@@ -1,5 +1,4 @@
-
-     <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -29,12 +28,13 @@
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; height: auto; }
     body {
       font-family: var(--font-body);
       background: var(--bg);
       color: var(--text-body);
-      overflow-y:auto;
+      overflow-x: hidden;
+      overflow-y: auto;
       -webkit-font-smoothing: antialiased;
     }
 
@@ -50,7 +50,7 @@
       backdrop-filter: blur(12px);
     }
     .nav-inner {
-      max-width: 1140px; margin: 0 auto; height: 66px;
+      max-width: 1140px; margin: 0 auto; min-height: 66px;
       display: flex; align-items: center; justify-content: space-between;
     }
     .nav-logo {
@@ -499,5 +499,4 @@
         </p>
 
         <div class="hero-ctas">
-          <a href="#services" class="btn-orange">
-            Expl
+          <a href="#serv
