@@ -3,68 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kabeer Growth Lab | Professional Digital Growth</title>
+    <title>Kabeer Growth Lab | Elite Digital Agency</title>
     <style>
         :root {
-            --accent: #3EE8B5;
-            --bg-deep: #080C14;
-            --bg-card: #0F1622;
-            --text-primary: #E8EDF5;
-            --text-muted: #7B8FA8;
+            --primary: #6366f1;
+            --secondary: #a855f7;
+            --accent: #f43f5e;
+            --dark: #0f172a;
+            --light: #f8fafc;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg-deep); color: var(--text-primary); line-height: 1.6; overflow-y: auto; }
+        body { font-family: 'Inter', sans-serif; background: var(--dark); color: var(--light); line-height: 1.6; }
 
-        /* Navbar */
-        nav { padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: rgba(8, 12, 20, 0.95); z-index: 1000; }
-        .logo { font-size: 1.5rem; font-weight: 800; color: var(--accent); }
+        /* Navigation */
+        nav { padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 1000; }
+        .nav-links a { color: white; margin-left: 20px; text-decoration: none; font-weight: 500; }
 
-        /* Hero */
-        .hero { height: 80vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 0 5%; }
-        h1 { font-size: 3.5rem; margin-bottom: 20px; }
-        .hero p { color: var(--text-muted); max-width: 600px; margin-bottom: 30px; }
-        .cta-btn { padding: 15px 30px; background: var(--accent); color: var(--bg-deep); border-radius: 50px; text-decoration: none; font-weight: bold; }
+        /* Hero with Gradient */
+        .hero { padding: 100px 5%; text-align: center; background: linear-gradient(135deg, var(--primary), var(--secondary)); }
+        .hero h1 { font-size: 4rem; margin-bottom: 20px; }
+        .btn-grad { padding: 15px 40px; background: var(--accent); color: white; border-radius: 50px; font-weight: bold; border: none; cursor: pointer; transition: 0.3s; }
+        .btn-grad:hover { transform: scale(1.1); }
 
-        /* Sections */
-        .section { padding: 80px 5%; max-width: 1200px; margin: auto; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
-        .card { background: var(--bg-card); padding: 30px; border-radius: 15px; border: 1px solid #1f2937; }
-        
-        /* Contact */
-        .contact-form { display: flex; flex-direction: column; gap: 15px; max-width: 600px; margin: auto; }
-        input, textarea { padding: 15px; background: #1a2230; border: 1px solid #333; color: white; border-radius: 8px; }
-        button { padding: 15px; background: var(--accent); border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        /* Services Grid - More Options */
+        .services { padding: 80px 5%; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; }
+        .service-card { padding: 40px; background: #1e293b; border-radius: 20px; transition: 0.3s; border: 1px solid #334155; }
+        .service-card:hover { border-color: var(--primary); transform: translateY(-10px); background: #334155; }
+
+        /* Vibrant Contact Section */
+        .contact { padding: 80px 5%; background: #1e293b; border-radius: 50px 50px 0 0; }
+        .form-container { max-width: 600px; margin: auto; }
+        input, textarea { width: 100%; padding: 15px; margin-bottom: 15px; border-radius: 10px; border: none; background: #0f172a; color: white; }
     </style>
 </head>
 <body>
 
     <nav>
-        <div class="logo">Kabeer Growth Lab</div>
-        <div>Menu</div>
+        <div style="font-size: 1.5rem; font-weight: 800; color: var(--accent);">KABEER LAB</div>
+        <div class="nav-links">
+            <a href="#">Home</a> <a href="#">Services</a> <a href="#">Portfolio</a> <a href="#">Contact</a>
+        </div>
     </nav>
 
-    <section class="hero">
-        <h1>Transform Your <span>Digital Potential</span></h1>
-        <p>We help businesses scale through data-driven marketing, SEO, and creative strategy.</p>
-        <a href="#contact" class="cta-btn">Get Started</a>
+    <header class="hero">
+        <h1>Scale Your Growth With Elite Strategy</h1>
+        <p>Premium Digital Marketing Services for ambitious brands.</p><br>
+        <button class="btn-grad">Get A Quote</button>
+    </header>
+
+    <section class="services">
+        <div class="service-card"><h3>🚀 SEO Mastery</h3><p>Top ranking results for your business.</p></div>
+        <div class="service-card"><h3>💰 Paid Ads</h3><p>ROI-focused campaigns that drive sales.</p></div>
+        <div class="service-card"><h3>🎨 Brand Design</h3><p>Visual identities that stand out.</p></div>
+        <div class="service-card"><h3>📱 Social Media</h3><p>Engage your audience like never before.</p></div>
     </section>
 
-    <section class="section">
-        <div class="grid">
-            <div class="card"><h3>SEO Strategy</h3><p>Rank higher and reach more customers organically.</p></div>
-            <div class="card"><h3>Paid Ads</h3><p>High-converting campaigns for maximum ROI.</p></div>
-            <div class="card"><h3>Brand Growth</h3><p>Building an identity that resonates with your audience.</p></div>
+    <section class="contact">
+        <h2 style="text-align: center; margin-bottom: 30px;">Let's Build Something Great</h2>
+        <div class="form-container">
+            <input type="text" placeholder="Full Name">
+            <input type="email" placeholder="Your Email">
+            <textarea placeholder="Tell us your goals" rows="5"></textarea>
+            <button class="btn-grad" style="width: 100%;">Send Message</button>
         </div>
-    </section>
-
-    <section id="contact" class="section">
-        <h2 style="text-align: center; margin-bottom: 40px;">Work With Us</h2>
-        <form class="contact-form">
-            <input type="text" placeholder="Name" required>
-            <input type="email" placeholder="Email" required>
-            <textarea placeholder="Tell us about your project" rows="5"></textarea>
-            <button type="submit">Submit Request</button>
-        </form>
     </section>
 
 </body>
